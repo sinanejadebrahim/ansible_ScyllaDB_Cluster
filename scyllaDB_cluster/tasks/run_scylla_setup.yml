@@ -1,0 +1,13 @@
+- name: Confirm Initialization
+  pause:
+    prompt: "\nScyllaDB cluster configuration complete. this is the last step befor starting the services - you can run scylla_setup on each node manually.\n⚠️ Warnings: \n1.(this will format scylla disk and mount it)\n2. This will run scylla benchmarks which take a couple of minutes (Don't worry if it looks stuck)\nDo you want to run scylla_setup now? (y/n)"
+  register: init_confirmation
+  run_once: true
+
+- name: Set user_response variable based on input
+  set_fact:
+    init_confirmation: "{{ init_confirmation.user_input }}"
+
+- name: Initialize ScyllaDB Cluster
+  command: "scylla_setup --disks {{ scylla_disk }} --online-discard 1 --nic {{ nic }} --io-setup 1 --no-fstrim-setup --no-rsyslog-setup"
+  when: init_confirmation == 'y' or init_confirmation == 'yes'

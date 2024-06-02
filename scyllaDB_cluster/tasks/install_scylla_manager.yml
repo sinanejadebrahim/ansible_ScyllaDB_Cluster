@@ -1,0 +1,33 @@
+- name: Ensure directory for keyrings exists
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+
+- name: Add ScyllaDB GPG key
+  command: gpg --homedir /tmp --no-default-keyring --keyring /etc/apt/keyrings/scylladb.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys d0a112e067426ab2
+
+- name: Download Scylla Manager sources list
+  get_url:
+    url: http://downloads.scylladb.com/deb/ubuntu/scylladb-manager-3.2.list
+    dest: /etc/apt/sources.list.d/scylla-manager.list
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install Scylla Manager Server and Client
+  apt:
+    name:
+      - scylla-manager-server
+      - scylla-manager-client
+    state: present
+
+- name: Copy manager config file
+  template:
+    src: scylla-manager.j2
+    dest: /etc/scylla-manager/scylla-manager.yaml
+
+- name: config manager
+  shell: |
+    scyllamgr_setup --no-scylla-setup

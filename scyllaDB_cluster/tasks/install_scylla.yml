@@ -1,0 +1,39 @@
+- name: Create directory for apt keyrings
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+
+- name: Add ScyllaDB GPG key to apt keyring
+  shell: |
+    sudo gpg --homedir /tmp --no-default-keyring --keyring /etc/apt/keyrings/scylladb.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys d0a112e067426ab2
+  ignore_errors: yes
+
+- name: Download Scylla repository list
+  get_url:
+    url: "http://downloads.scylladb.com/deb/debian/scylla-5.4.list"
+    dest: "/etc/apt/sources.list.d/scylla.list"
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install ScyllaDB
+  apt:
+    name: scylla
+    state: present
+    update_cache: yes
+
+- name: copy scylla config
+  template:
+    src: scylla.j2
+    dest: /etc/scylla/scylla.yaml
+
+- name: Install OpenJDK 11
+  apt:
+    name: openjdk-11-jre-headless
+    state: present
+    update_cache: yes
+
+- name: Set Java alternatives to OpenJDK 11
+  command: update-java-alternatives --jre-headless -s java-1.11.0-openjdk-amd64

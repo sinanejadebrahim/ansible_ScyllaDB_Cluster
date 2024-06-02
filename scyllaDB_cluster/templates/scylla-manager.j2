@@ -1,0 +1,9 @@
+http: "{{ hostvars[inventory_hostname]['ansible_host'] }}:5080"
+
+database:
+  replication_factor: 5
+  keyspace: scylla_manager
+  hosts:
+  {% for host in groups['db_hosts'] %}
+  - {{ hostvars[host]['ansible_host'] }}
+  {% endfor %}

@@ -1,0 +1,28 @@
+- name: Download Scylla Manager Agent sources list
+  get_url:
+    url: http://downloads.scylladb.com/deb/ubuntu/scylladb-manager-3.2.list
+    dest: /etc/apt/sources.list.d/scylla-manager.list
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install Scylla Manager Agent
+  apt:
+    name: scylla-manager-agent
+    state: present
+
+- name: get Agent token
+  command: /usr/sbin/scyllamgr_auth_token_gen
+  register: agent_token
+  run_once: true
+  delegate_to: "{{ groups['db_hosts'][0] }}"
+
+- name: Copy agent config file
+  template:
+    src: scylla-manager-agent.j2
+    dest: /etc/scylla-manager-agent/scylla-manager-agent.yaml
+
+- name: configure agent
+  shell: |
+    scyllamgr_agent_setup -y

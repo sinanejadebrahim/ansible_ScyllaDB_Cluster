@@ -1,0 +1,11 @@
+---
+# tasks file for scyllaDB_cluster
+- include: install_scylla.yml
+  when: "'db_hosts' in group_names"
+- include: install_scylla_manager_agent.yml
+  when: "'db_hosts' in group_names"
+- include: install_scylla_manager.yml
+  when: "'management_host' in group_names"
+- include: run_scylla_setup.yml
+  when: "'db_hosts' in group_names"
+- include: start_all_services.yml

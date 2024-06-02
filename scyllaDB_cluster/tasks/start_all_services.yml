@@ -1,0 +1,21 @@
+- name: start scylla service
+  systemd:
+    name: scylla-server
+    state: started
+  when: "'db_hosts' in group_names"
+
+- name: start scylla agent service
+  systemd:
+    name: scylla-manager-agent
+    state: started
+  when: "'db_hosts' in group_names"
+
+- name: start scylla manager service
+  systemd:
+    name: scylla-manager
+    state: started
+  when: "'management_host' in group_names"
+
+- name: add clsuter to scylla-manager sctool
+  command: "sctool cluster add --name {{ cluster_name }} --host {{ hostvars[groups['db_hosts'][0]].ansible_host }} --auth-token {{ agent_token.stdout }}"
+  when: "'management_host' in group_names"

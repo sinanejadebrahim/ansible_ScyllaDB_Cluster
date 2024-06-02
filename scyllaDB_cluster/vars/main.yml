@@ -1,0 +1,15 @@
+---
+# vars file for scyllaDB_cluster
+
+# required
+cluster_name: "cluster"
+
+# name of the NIC with the ansible host IP
+# required
+nic: "eth0"
+
+# required
+scylla_disk: "change me"
+
+s3_access_key: "empty"
+s3_secret: "empty"

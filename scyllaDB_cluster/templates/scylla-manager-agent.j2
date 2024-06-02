@@ -1,0 +1,9 @@
+auth_token: {{ agent_token.stdout }}
+prometheus: "{{ hostvars[inventory_hostname]['ansible_host'] }}:5090"
+scylla:
+  api_address: "{{ hostvars[inventory_hostname]['ansible_host'] }}"
+  api_port: 10000
+s3:
+  access_key_id: {{ s3_access_key }}
+  secret_access_key: {{ s3_secret }}
+  provider: AWS

@@ -1,0 +1,6 @@
+- name: install scyllaDB Cluster (scyllaDB server - scyllaDB manager - scyllaDB manager agent)
+  hosts: all
+  become: true
+  gather_facts: false
+  roles:
+    - scyllaDB_cluster
